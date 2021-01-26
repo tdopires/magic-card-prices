@@ -31,18 +31,24 @@ module.exports = {
           var card_set_array = [];
           var card = {};
           var curency = "BRL";
+
+          var regexSetsPrices = new RegExp("g_avgprice=\\'(.*?)\\'", "i");
+          var setsPrices = JSON.parse(body.match(regexSetsPrices)[1]);
+
           $(".card-image .edicoes li").each(function(i, elem) {
             var regexSetInfo = new RegExp("vetPorEdicao\\[" + i.toString() + "\\]=\\[(.*?)\\];", "i");
             var setInfo = JSON.parse("[" + body.match(regexSetInfo)[1] + "]");
 
-            card_set = setInfo[6];
+            var card_set = setInfo[5];
+            var card_prices = setsPrices[setInfo[7]];
+
             card_sets_obj[card_set] = {}; //No prices found yet!
             card_sets_obj[card_set][curency] = []; //Set prices as USD
 
             // Minor, medium and major price for the card, and also set info
-            card_sets_obj[card_set][curency].push(setInfo[5].replace(',', '.'));
-            card_sets_obj[card_set][curency].push(setInfo[4].replace(',', '.'));
-            card_sets_obj[card_set][curency].push(setInfo[3].replace(',', '.'));
+            card_sets_obj[card_set][curency].push(card_prices["precoMenor"].toFixed(2).toString());
+            card_sets_obj[card_set][curency].push(card_prices["precoMedio"].toFixed(2).toString());
+            card_sets_obj[card_set][curency].push(card_prices["precoMaior"].toFixed(2).toString());
           });
 
           card["title"] = title;
